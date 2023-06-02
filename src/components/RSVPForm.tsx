@@ -20,11 +20,9 @@ function classNames(...classes: string[]) {
 }
 
 const RSVPForm: React.FC<RSVPFormProps> = ({ invitee, onFormSubmit }) => {
-  const number_of_pax: (
-    | { id: number; name: string }
-    | (() => { id: number; name: string } | undefined)
-    | undefined
-  )[] = [];
+  type Pax = { id: number; name: string };
+
+  const number_of_pax: Pax[] = [];
 
   for (let i = 1; i <= invitee.inviteCount; i++) {
     number_of_pax.push({ id: i, name: i.toString() });
@@ -88,6 +86,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ invitee, onFormSubmit }) => {
                     </Listbox.Button>
 
                     <Transition
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       show={open}
                       as={Fragment}
                       leave="transition ease-in duration-100"
@@ -97,7 +96,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ invitee, onFormSubmit }) => {
                       <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                         {number_of_pax.map((person) => (
                           <Listbox.Option
-                            key={person.id}
+                            key={person?.id}
                             className={({ active }) =>
                               classNames(
                                 active
@@ -116,7 +115,7 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ invitee, onFormSubmit }) => {
                                     "block truncate"
                                   )}
                                 >
-                                  {person.name}
+                                  {person?.name}
                                 </span>
 
                                 {selected ? (
@@ -201,7 +200,6 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ invitee, onFormSubmit }) => {
                 </p>
               )}
             </div>
-
             <button
               type="submit"
               className="mt-4 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
