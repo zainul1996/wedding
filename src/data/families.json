@@ -1,0 +1,14 @@
+[
+    {
+        "familyName": "Smith",
+        "inviteCount": 5
+    },
+    {
+        "familyName": "Johnson",
+        "inviteCount": 3
+    },
+    {
+        "familyName": "Williams",
+        "inviteCount": 4
+    }
+]
