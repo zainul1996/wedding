@@ -53,10 +53,7 @@ const FamilyNamePage: React.FC<FamilyNameProps> = ({ invitee }) => {
         redirect: "follow",
       };
 
-      const response = await fetch(
-        "http://localhost:3000/api/rsvp",
-        requestOptions
-      );
+      const response = await fetch("/api/rsvp", requestOptions);
 
       if (!response.ok) {
         throw new Error(`RSVP failed: ${response.statusText}`);

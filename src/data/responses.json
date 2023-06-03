@@ -7,8 +7,8 @@
   },
   {
     "familyName": "Johnson",
-    "attendingCount": 0,
-    "email": "-",
-    "attending": false
+    "attendingCount": 1,
+    "email": "sad@gmail.com",
+    "attending": true
   }
 ]
