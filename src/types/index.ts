@@ -11,6 +11,7 @@ export type Response = {
     familyName: string;
     attendingCount: number;
     email: string;
+    attending: boolean;
 };
 
 // Define the type for the data in families.json

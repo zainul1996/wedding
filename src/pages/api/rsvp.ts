@@ -13,22 +13,23 @@ export default function handler(req: RSVPRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
-    console.log(req.body);
-    const { familyName, attendingCount, email } = req.body;
-
-
-    if (!familyName || attendingCount === undefined || !email) {
-        return res.status(400).json({ message: 'Missing required fields' });
-    }
+    const { familyName, attendingCount, email, attending } = req.body;
 
     const filePath = path.join(process.cwd(), 'src/data/responses.json');
     const responsesData: ResponsesData = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as ResponsesData;
 
     const newResponse: Response = {
         familyName,
-        attendingCount,
+        attendingCount: typeof attendingCount === 'string' ? parseInt(attendingCount, 10) : attendingCount,
         email,
-    };
+        attending: attending.toString() === 'true',
+      };
+
+    //   if newResponse attending is false then check if the familyName is in the responsesData and if it is then remove it
+    const index = responsesData.findIndex((response) => response.familyName === newResponse.familyName);
+        if (index !== -1) {
+            responsesData.splice(index, 1);
+        }
 
     responsesData.push(newResponse);
 

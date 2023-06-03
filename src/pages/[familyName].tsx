@@ -31,10 +31,12 @@ const FamilyNamePage: React.FC<FamilyNameProps> = ({ invitee }) => {
   const handleFormSubmit = async (
     familyName: string,
     attendingCount: number,
-    email: string
+    email: string,
+    attending: boolean
   ) => {
     setSubmitting(true);
     try {
+      console.log(attending);
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
@@ -42,6 +44,7 @@ const FamilyNamePage: React.FC<FamilyNameProps> = ({ invitee }) => {
       urlencoded.append("familyName", familyName);
       urlencoded.append("attendingCount", String(attendingCount));
       urlencoded.append("email", email);
+      urlencoded.append("attending", String(attending));
 
       const requestOptions: RequestInit = {
         method: "POST",
@@ -59,12 +62,18 @@ const FamilyNamePage: React.FC<FamilyNameProps> = ({ invitee }) => {
         throw new Error(`RSVP failed: ${response.statusText}`);
       }
 
-      router.push("/responses").catch(console.error);
+      router.push("/submitted").catch(console.error);
     } catch (error) {
       console.error(error);
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleSubmitNotAttending = (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log("Submitting RSVP");
+    handleFormSubmit(invitee.familyName, 0, "-", false).catch(console.error);
   };
 
   return (
@@ -109,6 +118,7 @@ const FamilyNamePage: React.FC<FamilyNameProps> = ({ invitee }) => {
                     </Listbox.Button>
 
                     <Transition
+                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       show={open}
                       as={Fragment}
                       leave="transition ease-in duration-100"
@@ -189,6 +199,7 @@ const FamilyNamePage: React.FC<FamilyNameProps> = ({ invitee }) => {
         <button
           type="submit"
           className="mt-4 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          onClick={handleSubmitNotAttending}
         >
           Submit
         </button>

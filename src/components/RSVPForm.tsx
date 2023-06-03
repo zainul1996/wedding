@@ -1,6 +1,6 @@
 // src/components/RSVPForm.tsx
 
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import { type Invitee } from "../types";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
@@ -11,7 +11,8 @@ interface RSVPFormProps {
   onFormSubmit: (
     familyName: string,
     attendingCount: number,
-    email: string
+    email: string,
+    attending: boolean
   ) => Promise<void>;
 }
 
@@ -32,15 +33,14 @@ const RSVPForm: React.FC<RSVPFormProps> = ({ invitee, onFormSubmit }) => {
   const [selected, setSelected] = useState(number_of_pax[0]);
   const [emailValid, setEmailValid] = useState(true);
 
-  const handleAttendingChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setAttendingCount(Number(event.target.value));
-  };
+  useEffect(() => {
+    console.log(selected?.name);
+    // convert to number
+  }, [selected]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    onFormSubmit(invitee.familyName, attendingCount, email)
+    onFormSubmit(invitee.familyName, Number(selected?.name), email, true)
       .then(() => {
         setAttendingCount(0);
         setEmail("");

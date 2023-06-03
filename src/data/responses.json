@@ -1,7 +1,8 @@
 [
   {
     "familyName": "Smith",
-    "attendingCount": "2",
-    "email": "smith@gmail.com"
+    "attendingCount": 3,
+    "email": "z@gail.com",
+    "attending": true
   }
 ]
