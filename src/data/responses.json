@@ -1,8 +1,14 @@
 [
   {
     "familyName": "Smith",
-    "attendingCount": 3,
-    "email": "z@gail.com",
+    "attendingCount": 2,
+    "email": "asdas@gmail.com",
     "attending": true
+  },
+  {
+    "familyName": "Johnson",
+    "attendingCount": 0,
+    "email": "-",
+    "attending": false
   }
 ]
