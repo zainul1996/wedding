@@ -5,6 +5,7 @@ import { type Invitee, type ResponsesData } from "~/types";
 import fs from "fs/promises";
 import Link from "next/link";
 import Layout from "~/components/Layout";
+import { useState } from "react";
 
 interface Params {
   [key: string]: string | undefined;
@@ -42,12 +43,12 @@ const getStatusClass = (status: string) => {
   );
 };
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 const Home: React.FC<Props> = ({ invitesData }) => {
-  console.log(invitesData);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredInvitesData = invitesData.filter((inviteeData) =>
+    inviteeData.familyName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   return (
     <>
       <Head>
@@ -59,18 +60,25 @@ const Home: React.FC<Props> = ({ invitesData }) => {
         <div className="mx-auto md:w-6/12">
           <h1 className="mb-5 mt-10 text-3xl font-bold text-gray-900">
             Invite List
-          </h1>{" "}
-          {/* Add a heading to the page */}
+          </h1>
           <p className="mb-5 text-gray-600">
             Please look for your name in the list below and click the RSVP
             button to let us know if you will be attending our Nikkah ceremony.
           </p>{" "}
-          {/* Add instructions for the user */}
+          <div className="mb-5 flex justify-end">
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-40 rounded-md border border-gray-300 px-3 py-1 md:w-48"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
           <ul
             role="list"
             className="divide-y divide-purple-200 rounded-lg bg-purple-100 px-7"
           >
-            {invitesData.map((inviteeData) => (
+            {filteredInvitesData.map((inviteeData) => (
               <li
                 key={inviteeData.familyName}
                 className="flex items-center justify-between gap-x-6 py-5"
