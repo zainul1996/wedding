@@ -10,6 +10,7 @@ import path from "path";
 import fs from "fs/promises";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 interface FamilyNameProps {
   invitee: Invitee;
@@ -56,7 +57,9 @@ const FamilyNamePage: React.FC<FamilyNameProps> = ({ invitee }) => {
       const response = await fetch("/api/rsvp", requestOptions);
 
       if (!response.ok) {
-        throw new Error(`RSVP failed: ${response.statusText}`);
+        throw new Error(
+          `RSVP failed: ${response.statusText} (${response.status})`
+        );
       }
 
       router.push("/submitted").catch(console.error);
@@ -213,28 +216,40 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
+  const config = {
+    method: "get",
+    maxBodyLength: Infinity,
+    url: "https://zainulandsara-default-rtdb.asia-southeast1.firebasedatabase.app/families.json",
+  };
 
-  const filePath = path.join(process.cwd(), "src/data/families.json");
-  const invitesDataJson = await fs.readFile(filePath, "utf-8");
-  const invitesData: ResponsesData = JSON.parse(
-    invitesDataJson
-  ) as ResponsesData;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const response = (await axios.request(
+      config
+    )) as AxiosResponse<ResponsesData>;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const invitesData: ResponsesData = response.data;
 
-  const invitee = invitesData.find(
-    (invitee) => invitee.familyName === params.familyName
-  );
+    const invitee = invitesData.find(
+      (invitee) => invitee.familyName === params.familyName
+    );
 
-  if (!invitee) {
+    if (!invitee) {
+      return {
+        notFound: true,
+      };
+    }
+    return {
+      props: {
+        invitee,
+      },
+    };
+  } catch (error) {
+    console.log(error);
     return {
       notFound: true,
     };
   }
-
-  return {
-    props: {
-      invitee,
-    },
-  };
 };
 
 export default FamilyNamePage;

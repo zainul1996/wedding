@@ -4,22 +4,26 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
 import { type Response, type ResponsesData } from "../../types";
+import axios from "axios";
 
 interface RSVPRequest extends NextApiRequest {
   body: Response;
 }
 
-export default function handler(req: RSVPRequest, res: NextApiResponse) {
+export default async function handler(req: RSVPRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
   try {
     const { familyName, attendingCount, email, attending } = req.body;
-
-    const filePath = path.join(process.cwd(), "src/data/responses.json");
-    const responsesData: ResponsesData = JSON.parse(
-      fs.readFileSync(filePath, "utf-8")
-    ) as ResponsesData;
+    const configResponses = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: "https://zainulandsara-default-rtdb.asia-southeast1.firebasedatabase.app/responses.json",
+    };
+    const responseResponses = await axios.request(configResponses);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const responsesData: ResponsesData = responseResponses.data;
 
     const newResponse: Response = {
       familyName,
@@ -40,8 +44,24 @@ export default function handler(req: RSVPRequest, res: NextApiResponse) {
     }
 
     responsesData.push(newResponse);
+    const configResponseUpdate = {
+      method: "put",
+      maxBodyLength: Infinity,
+      url: "https://zainulandsara-default-rtdb.asia-southeast1.firebasedatabase.app/responses.json",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: responsesData,
+    };
 
-    fs.writeFileSync(filePath, JSON.stringify(responsesData, null, 2));
+    axios
+      .request(configResponseUpdate)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ message: error as string });

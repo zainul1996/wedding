@@ -6,6 +6,7 @@ import fs from "fs/promises";
 import Link from "next/link";
 import Layout from "~/components/Layout";
 import { useState } from "react";
+import axios, { AxiosResponse } from "axios";
 
 interface Params {
   [key: string]: string | undefined;
@@ -115,54 +116,76 @@ export const getServerSideProps: GetServerSideProps<
   Props,
   Params
 > = async () => {
-  const familiesFilePath = path.join(process.cwd(), "src/data/families.json");
-  const invitesDataJson = await fs.readFile(familiesFilePath, "utf-8");
-  const invitesData: ResponsesData = JSON.parse(
-    invitesDataJson
-  ) as ResponsesData;
-
-  const invitesDataWithAttending = invitesData.map((invitee) => {
-    return { ...invitee, attendingStatus: "none" };
-  });
-
-  const responsesFilePath = path.join(process.cwd(), "src/data/responses.json");
-  const responsesDataJson = await fs.readFile(responsesFilePath, "utf-8");
-  const responsesData: ResponsesData = JSON.parse(
-    responsesDataJson
-  ) as ResponsesData;
-  const invitesDataWithAttendingCount = invitesDataWithAttending.map(
-    (invitee) => {
-      const response = responsesData.find(
-        (response) => response.familyName === invitee.familyName
-      );
-      if (response) {
-        if (response.attending) {
-          return { ...invitee, attendingStatus: "attending" };
-        } else {
-          return { ...invitee, attendingStatus: "not attending" };
-        }
-      } else {
-        return invitee;
-      }
-    }
-  );
-
-  // sort alphabetically
-  invitesDataWithAttendingCount.sort((a, b) => {
-    if (a.familyName < b.familyName) {
-      return -1;
-    }
-    if (a.familyName > b.familyName) {
-      return 1;
-    }
-    return 0;
-  });
-
-  return {
-    props: {
-      invitesData: invitesDataWithAttendingCount,
-    },
+  const configFamilies = {
+    method: "get",
+    maxBodyLength: Infinity,
+    url: "https://zainulandsara-default-rtdb.asia-southeast1.firebasedatabase.app/families.json",
   };
+
+  const configResponses = {
+    method: "get",
+    maxBodyLength: Infinity,
+    url: "https://zainulandsara-default-rtdb.asia-southeast1.firebasedatabase.app/responses.json",
+  };
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const responseFamilies = await axios.request(configFamilies);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const invitesData: ResponsesData = responseFamilies.data;
+
+    const invitesDataWithAttending = invitesData.map((invitee) => {
+      return { ...invitee, attendingStatus: "none" };
+    });
+
+    console.log(invitesDataWithAttending);
+
+    const responseResponses = await axios.request(configResponses);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const responsesData: ResponsesData = responseResponses.data;
+
+    const invitesDataWithAttendingCount = invitesDataWithAttending.map(
+      (invitee) => {
+        const response = responsesData.find(
+          (response) => response.familyName === invitee.familyName
+        );
+        if (response) {
+          if (response.attending) {
+            return { ...invitee, attendingStatus: "attending" };
+          } else {
+            return { ...invitee, attendingStatus: "not attending" };
+          }
+        } else {
+          return invitee;
+        }
+      }
+    );
+
+    // sort alphabetically
+    invitesDataWithAttendingCount.sort((a, b) => {
+      if (a.familyName < b.familyName) {
+        return -1;
+      }
+      if (a.familyName > b.familyName) {
+        return 1;
+      }
+      return 0;
+    });
+    console.log(invitesDataWithAttendingCount);
+
+    return {
+      props: {
+        invitesData: invitesDataWithAttendingCount,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      props: {
+        invitesData: [],
+      },
+    };
+  }
 };
 
 export default Home;
