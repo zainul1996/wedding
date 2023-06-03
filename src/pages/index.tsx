@@ -22,12 +22,24 @@ interface Props {
 
 const getStatusClass = (status: string) => {
   if (status === "attending") {
-    return "text-green-700 bg-green-50 ring-green-600/20";
+    return (
+      <div className="flex-none rounded-full bg-emerald-500/20 p-1">
+        <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+      </div>
+    );
   }
   if (status === "not attending") {
-    return "text-red-800 bg-red-50 ring-red-600/20";
+    return (
+      <div className="flex-none rounded-full bg-red-500/20 p-1">
+        <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
+      </div>
+    );
   }
-  return "text-gray-600 bg-gray-50 ring-gray-500/10";
+  return (
+    <div className="flex-none rounded-full bg-gray-500/20 p-1">
+      <div className="h-1.5 w-1.5 rounded-full bg-gray-500" />
+    </div>
+  );
 };
 
 function classNames(...classes: string[]) {
@@ -56,7 +68,7 @@ const Home: React.FC<Props> = ({ invitesData }) => {
           {/* Add instructions for the user */}
           <ul
             role="list"
-            className="divide-y divide-purple-100 rounded-lg bg-purple-100 px-7"
+            className="divide-y divide-purple-200 rounded-lg bg-purple-100 px-7"
           >
             {invitesData.map((inviteeData) => (
               <li
@@ -65,22 +77,17 @@ const Home: React.FC<Props> = ({ invitesData }) => {
               >
                 <div className="min-w-0">
                   <div className="flex items-start gap-x-3">
-                    <p className="text-sm font-semibold leading-6 text-gray-900">
-                      {inviteeData.familyName} and Family
-                    </p>
-                    <p
-                      className={classNames(
-                        getStatusClass(inviteeData.attendingStatus),
-                        "mt-0.5 whitespace-nowrap rounded-md px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
-                      )}
-                    >
-                      {inviteeData.attendingStatus}
-                    </p>
+                    <div className="mt-1 flex items-center gap-x-1.5">
+                      <p className="text-sm font-semibold leading-6 text-gray-900">
+                        {inviteeData.familyName} and Family
+                      </p>
+                      {getStatusClass(inviteeData.attendingStatus)}
+                    </div>
                   </div>
                 </div>
                 <div className="flex flex-none items-center gap-x-4">
                   <Link
-                    className="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block"
+                    className="rounded-md bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 md:text-sm"
                     href={`/${inviteeData.familyName}`}
                   >
                     RSVP
