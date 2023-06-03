@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 // src/pages/[familyName].tsx
 
 import { useState, Fragment } from "react";
@@ -6,11 +9,9 @@ import { useRouter } from "next/router";
 import { type Invitee, type ResponsesData } from "../types";
 import RSVPForm from "../components/RSVPForm";
 import Layout from "../components/Layout";
-import path from "path";
-import fs from "fs/promises";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { type AxiosResponse } from "axios";
 
 interface FamilyNameProps {
   invitee: Invitee;
@@ -118,7 +119,6 @@ const FamilyNamePage: React.FC<FamilyNameProps> = ({ invitee }) => {
                     </Listbox.Button>
 
                     <Transition
-                      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                       show={open}
                       as={Fragment}
                       leave="transition ease-in duration-100"
@@ -223,11 +223,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   };
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const response = (await axios.request(
-      config
-    )) as AxiosResponse<ResponsesData>;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const response = await axios.request(config);
     const invitesData: ResponsesData = response.data;
 
     const invitee = invitesData.find(

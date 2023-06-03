@@ -1,8 +1,6 @@
 // src/pages/api/rsvp.ts
 
 import { type NextApiRequest, type NextApiResponse } from "next";
-import fs from "fs";
-import path from "path";
 import { type Response, type ResponsesData } from "../../types";
 import axios from "axios";
 
@@ -62,9 +60,9 @@ export default async function handler(req: RSVPRequest, res: NextApiResponse) {
       .catch((error) => {
         console.log(error);
       });
-  } catch (error: any) {
+  } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error as string });
+    res.status(500).json({ message: error });
   }
 
   res.status(200).json({ message: "RSVP successfully recorded" });
