@@ -37,7 +37,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-              Zainul <span className="text-red-500">&hearts;</span> Sara
+              {/* Zainul <span className="text-red-500">&hearts;</span> Sara */}
+              Zainul &amp; Sara
             </h1>
           </div>
         </div>
