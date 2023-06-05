@@ -44,7 +44,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </header>
 
-      <main className="absolute w-full bg-purple-200 px-6 py-16 sm:py-24 lg:px-8">
+      <main className="absolute w-full px-6 py-16 sm:py-24 lg:px-8">
         <div className="mx-auto max-w-7xl">{children}</div>
       </main>
     </div>

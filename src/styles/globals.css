@@ -17,7 +17,14 @@ body {
   background-color: #fff;
   color: #000;
   /* Add the following line to set the background color of the body */
-  background-color: #E9D5FF;
+  /* background-color: #E9D5FF; */
+  background-image: url("/background.png");
+  background-position: bottom;
+  background-size: 100% auto;
+  @media (min-width: 768px) {
+    background-size: 50% auto; /* Adjusted size for desktop screens */
+  }
+  
 }
 
 a {
